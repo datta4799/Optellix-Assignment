@@ -61,28 +61,31 @@ namespace Optellix_Assignment
         /// <returns></returns>
         public RibbonPanel RibbonPanel(UIControlledApplication app)
         {
+            ///Tab Name
             string tab = "Optellix";
 
             RibbonPanel ribbonPanel = null;
 
             try
             {
+                ///CreateTab
                 app.CreateRibbonTab(tab);
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                TaskDialog.Show("Error",ex.Message.ToString());
             }
 
             try
             {
+                ///Create Panel Under the Tab
                 RibbonPanel panel = app.CreateRibbonPanel(tab, "Assignments");
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                TaskDialog.Show("Error", ex.Message.ToString());
             }
-
+            ///Get the Ribbon Panel with the Assigned name and return it.
             List<RibbonPanel> panels = app.GetRibbonPanels(tab);
             foreach (RibbonPanel p in panels.Where(p => p.Name == "Assignments"))
             {
@@ -90,11 +93,8 @@ namespace Optellix_Assignment
             }
 
             return ribbonPanel;
-
-
         }
 
         #endregion
     }
-
 }
