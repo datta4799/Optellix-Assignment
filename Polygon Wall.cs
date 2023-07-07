@@ -57,6 +57,7 @@ namespace Optellix_Assignment
                     WallsListBox.Items.Add(wall.Name);
                 }
             }
+            
         }
         /// <summary>
         /// Method for Button Click
@@ -65,42 +66,46 @@ namespace Optellix_Assignment
         /// <param name="e"></param>
         private void CreateWallBtn_Click(object sender, EventArgs e)
         {
-            UIDocument uidoc = commandData.Application.ActiveUIDocument;
-
-            Document doc = uidoc.Document;
-  
-            string selectedwall = WallsListBox.SelectedItem.ToString();
-
-            if (WallsListBox.SelectedItems.Count == 0)
+            try
             {
-                TaskDialog.Show("Error", "Select a Wall");
-            }
-            /// Retrieve the wall type based on its name 
-            FilteredElementCollector collector = new FilteredElementCollector(doc);
-            collector.OfClass(typeof(WallType));
-            IEnumerable<WallType> wallTypes = collector.Cast<WallType>().Where(wt => wt.Name == selectedwall);
+                UIDocument uidoc = commandData.Application.ActiveUIDocument;
 
-            if (wallTypes.Any())
-            {
-                ///Get the wall type ID
-                wallelementId = wallTypes.First().Id;
-                if (wallelementId == null)
+                Document doc = uidoc.Document;
+
+                string selectedwall = WallsListBox.SelectedItem.ToString();
+
+                /// Retrieve the wall type based on its name 
+                FilteredElementCollector collector = new FilteredElementCollector(doc);
+                collector.OfClass(typeof(WallType));
+                IEnumerable<WallType> wallTypes = collector.Cast<WallType>().Where(wt => wt.Name == selectedwall);
+
+                if (wallTypes.Any())
                 {
-                    TaskDialog.Show("Error", "WallType Id Not Found");
-                }
-                else
-                {
-                    if (checkBoxSW.Checked)
+                    ///Get the wall type ID
+                    wallelementId = wallTypes.First().Id;
+                    if (wallelementId == null)
                     {
-                        structuralwall = true;
+                        TaskDialog.Show("Error", "WallType Id Not Found");
                     }
-                    else 
-                    { 
-                        structuralwall = false; 
+                    else
+                    {
+                        if (checkBoxSW.Checked)
+                        {
+                            structuralwall = true;
+                        }
+                        else
+                        {
+                            structuralwall = false;
+                        }
+                        this.Close();
                     }
-                    this.Close();
                 }
             }
+            catch
+            {
+                TaskDialog.Show("Wall Selection Error", "No Wall Selected.\nPlease Select a Wall from the List");
+            }
+            
         }
         #endregion
     }

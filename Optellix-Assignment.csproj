@@ -78,6 +78,7 @@
       <DependentUpon>Polygon Wall.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StructuredLayerInformation.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Polygon Wall.resx">

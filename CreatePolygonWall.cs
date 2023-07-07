@@ -45,6 +45,7 @@ namespace Optellix_Assignment
                 Pwform.ShowDialog();
                 ElementId wallTypeId = Pwform.wallelementId;
                 bool StructuralWall = Pwform.structuralwall;
+                Pwform.Dispose();
                 {
                     if(wallTypeId != null) 
                     {
@@ -65,7 +66,9 @@ namespace Optellix_Assignment
 
                             ///Create the circle
                             Plane plane = Plane.CreateByNormalAndOrigin(activeView.ViewDirection, centerPoint);
-
+                            activeView.Dispose();
+                            plane.Dispose();
+                            level.Dispose();
 
                             ///Divide the circle into five equal parts
                             int divisionCount = 5;
@@ -97,12 +100,9 @@ namespace Optellix_Assignment
                                 Line line = Line.CreateBound(startPoint, endPoint);
                                 Wall.Create(doc, line, wallTypeId, levelId, 7, 0, false, StructuralWall);
                             }
+                            
                         }
                         catch (Exception ex) { TaskDialog.Show("Error", ex.Message.ToString()); }
-                    }
-                    else
-                    {
-                        TaskDialog.Show("Wall Selection Error", "Wall Type Not selected");
                     }
                     
                     trans.Commit();
