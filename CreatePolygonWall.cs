@@ -2,9 +2,12 @@
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Reflection;
-
+using System.Text;
 
 namespace Optellix_Assignment
 {
@@ -37,81 +40,85 @@ namespace Optellix_Assignment
             UIApplication uiApp = commandData.Application;
             UIDocument uiDoc = uiApp.ActiveUIDocument;
             Document doc = uiDoc.Document;
-            
-            
-            using (Transaction trans = new Transaction(doc,"create Wall"))
+                      
+            using(Transaction trans = new Transaction(doc,"Initialize the Form"))
             {
-                try
+                trans.Start();
+                Polygon_Wall_Form Pwform = new Polygon_Wall_Form(commandData);
+                Pwform.ShowDialog();
+                ElementId wallTypeId = Pwform.wallelementId;
+                bool StructuralWall = Pwform.structuralwall;
                 {
-                    trans.Start();
-
-                    // Get the active view
-                    View activeView = doc.ActiveView;
-                    Level level = activeView.GenLevel;
-                    ElementId levelId = level.Id;
-
-                    // Prompt the user to select the center point of the circle
-                    XYZ centerPoint = GetSelectedPoint(uiDoc);
-
-                    // Prompt the user to select the radius point of the circle
-                    XYZ radiusPoint = GetSelectedPoint(uiDoc);
-
-                    // Calculate the radius length
-                    double radius = centerPoint.DistanceTo(radiusPoint);
-
-                    // Create the circle
-                    Plane plane = Plane.CreateByNormalAndOrigin(activeView.ViewDirection, centerPoint);
-
-                    // Divide the circle into five equal parts
-                    int divisionCount = 5;
-                    double divisionAngle = 2 * Math.PI / divisionCount;
-
-                    // Store the points in a list
-                    List<XYZ> pentagonPoints = new List<XYZ>();
-
-                    // Calculate points along the circle's circumference
-                    for (int i = 0; i < divisionCount; i++)
+                    if(wallTypeId != null) 
                     {
-                        double angle = divisionAngle * i;
-                        double x = centerPoint.X + radius * Math.Cos(angle);
-                        double y = centerPoint.Y + radius * Math.Sin(angle);
-                        XYZ pointOnCircle = new XYZ(x, y, centerPoint.Z);
-                        pentagonPoints.Add(pointOnCircle);
-                    }
+                        try
+                        {
+                            View activeView = doc.ActiveView;
+                            Level level = activeView.GenLevel;
+                            ElementId levelId = level.Id;
 
-                    // Create lines between the points to form a pentagon
-                    for (int i = 0; i < divisionCount; i++)
+                            ///Prompt the user to select the center point of the circle
+                            XYZ centerPoint = GetSelectedPoint(uiDoc);
+
+                            ///Prompt the user to select the radius point of the circle
+                            XYZ radiusPoint = GetSelectedPoint(uiDoc);
+
+                            ///Calculate the radius length
+                            double radius = centerPoint.DistanceTo(radiusPoint);
+
+                            ///Create the circle
+                            Plane plane = Plane.CreateByNormalAndOrigin(activeView.ViewDirection, centerPoint);
+
+                            ///Divide the circle into five equal parts
+                            int divisionCount = 5;
+                            double divisionAngle = 2 * Math.PI / divisionCount;
+
+                            ///Store the points in a list
+                            List<XYZ> pentagonPoints = new List<XYZ>();
+
+                            ///Calculate points along the circle's circumference
+                            for (int i = 0; i < divisionCount; i++)
+                            {
+                                double angle = divisionAngle * i;
+                                double x = centerPoint.X + radius * Math.Cos(angle);
+                                double y = centerPoint.Y + radius * Math.Sin(angle);
+                                XYZ pointOnCircle = new XYZ(x, y, centerPoint.Z);
+                                pentagonPoints.Add(pointOnCircle);
+                            }
+                            
+                            for (int i = 0; i < divisionCount; i++)
+                            {
+                                XYZ startPoint = pentagonPoints[i];
+                                XYZ endPoint = pentagonPoints[(i + 1) % divisionCount];
+
+                                ///Create a new line element
+                                Line line = Line.CreateBound(startPoint, endPoint);
+                                Wall.Create(doc, line, wallTypeId, levelId, 7, 0, false, StructuralWall);
+                            }
+                        }
+                        catch (Exception ex) { TaskDialog.Show("Error", ex.Message.ToString()); }
+                    }
+                    else
                     {
-                        XYZ startPoint = pentagonPoints[i];
-                        XYZ endPoint = pentagonPoints[(i + 1) % divisionCount];
-
-                        // Create a new line element
-                        Line line = Line.CreateBound(startPoint, endPoint);
-
-                        Wall.Create(doc, line, levelId, true);
+                        TaskDialog.Show("Wall Selection Error", "Wall Type Not selected");
                     }
-
+                    
                     trans.Commit();
                 }
-                catch (Exception ex) { TaskDialog.Show("Error", ex.Message.ToString()); }
-                
             }
-
             return Result.Succeeded;
         }
         /// <summary>
         /// returns the selection of points in the Uidocument
         /// </summary>
         /// <param name="uidoc">The Current Uidocument</param>
-        /// <returns></returns>
+        /// <returns>XYZ point from the selection</returns>
         private XYZ GetSelectedPoint(UIDocument uidoc)
         {
-            // Get the selected point
+            /// Get the selected point
             XYZ selectedPoint = uidoc.Selection.PickPoint();
-
             return selectedPoint;
         }
-
         #endregion
     }
 }

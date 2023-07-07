@@ -41,14 +41,13 @@ namespace Optellix_Assignment
             CreatePolygonWall cpw = new CreatePolygonWall();
             string cpwPath = cpw.GetPath();
             if (panel.AddItem(new PushButtonData("Create Polygon Wall", "Polygon Wall", cpwPath, "Optellix_Assignment.CreatePolygonWall"))
-                is PushButton button)
+                is PushButton cpwbutton)
             {
-                button.ToolTip = "Create Polygon Wall";
+                cpwbutton.ToolTip = "Create Polygon Wall";
             }
                 
             panel.AddSeparator();
-
-
+              
 
 
             return Result.Succeeded;

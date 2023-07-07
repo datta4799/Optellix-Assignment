@@ -59,6 +59,8 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -67,9 +69,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CalculateWallHeight.cs" />
     <Compile Include="CreatePolygonWall.cs" />
     <Compile Include="Plugin.cs" />
+    <Compile Include="Polygon Wall.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Polygon Wall.Designer.cs">
+      <DependentUpon>Polygon Wall.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Polygon Wall.resx">
+      <DependentUpon>Polygon Wall.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
