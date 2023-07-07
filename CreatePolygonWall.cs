@@ -66,9 +66,13 @@ namespace Optellix_Assignment
                             ///Create the circle
                             Plane plane = Plane.CreateByNormalAndOrigin(activeView.ViewDirection, centerPoint);
 
+
                             ///Divide the circle into five equal parts
                             int divisionCount = 5;
                             double divisionAngle = 2 * Math.PI / divisionCount;
+
+                            double angleOrientationOffset = Math.PI / 2; /// 90 degrees
+                            double baseAngle = Math.Atan2(radiusPoint.Y - centerPoint.Y, radiusPoint.X - centerPoint.X) + angleOrientationOffset;
 
                             ///Store the points in a list
                             List<XYZ> pentagonPoints = new List<XYZ>();
@@ -76,7 +80,8 @@ namespace Optellix_Assignment
                             ///Calculate points along the circle's circumference
                             for (int i = 0; i < divisionCount; i++)
                             {
-                                double angle = divisionAngle * i;
+                                double angle = baseAngle + divisionAngle * i;
+
                                 double x = centerPoint.X + radius * Math.Cos(angle);
                                 double y = centerPoint.Y + radius * Math.Sin(angle);
                                 XYZ pointOnCircle = new XYZ(x, y, centerPoint.Z);
