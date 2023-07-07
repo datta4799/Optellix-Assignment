@@ -1,19 +1,10 @@
 ﻿using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
-using Autodesk.Revit.DB.DirectContext3D;
-using Autodesk.Revit.DB.PointClouds;
-using Autodesk.Revit.DB.Structure;
 using Autodesk.Revit.UI;
-using Autodesk.Revit.UI.Selection;
-using Microsoft.SqlServer.Server;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
+
 
 namespace Optellix_Assignment
 {
