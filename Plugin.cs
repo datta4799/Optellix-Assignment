@@ -1,12 +1,8 @@
 ﻿using Autodesk.Revit.UI;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Optellix_Assignment
 {
@@ -36,19 +32,22 @@ namespace Optellix_Assignment
         public Result OnStartup(UIControlledApplication application)
         {
             RibbonPanel panel = RibbonPanel(application);
+            string Path = Assembly.GetExecutingAssembly().Location;
 
-            ///Create a button that executes CreatePolygonWall class's Execute method
-            CreatePolygonWall cpw = new CreatePolygonWall();
-            string cpwPath = cpw.GetPath();
-            if (panel.AddItem(new PushButtonData("Create Polygon Wall", "Polygon Wall", cpwPath, "Optellix_Assignment.CreatePolygonWall"))
+            ///Create a button that executes CreatePolygonWall class's Execute method  
+            if (panel.AddItem(new PushButtonData("Create Polygon Wall", "Polygon Wall", Path, "Optellix_Assignment.CreatePolygonWall"))
                 is PushButton cpwbutton)
             {
                 cpwbutton.ToolTip = "Create Polygon Wall";
             }
                 
             panel.AddSeparator();
-              
 
+            if (panel.AddItem(new PushButtonData("Structured Layer Info", "Structured Layer Info", Path, "Optellix_Assignment.StructuredLayerInformation"))
+                is PushButton slibutton)
+            {
+                slibutton.ToolTip = "Structured Layer Info";
+            }
 
             return Result.Succeeded;
         }

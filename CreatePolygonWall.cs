@@ -3,7 +3,6 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 
 
 namespace Optellix_Assignment
@@ -12,19 +11,10 @@ namespace Optellix_Assignment
     /// Entry Point for creating polygonwall
     /// </summary>
     [Transaction(TransactionMode.Manual)]
-    public class CreatePolygonWall : IExternalCommand
+    internal class CreatePolygonWall : IExternalCommand
     {
         #region Create Polygon Wall Methods
 
-        /// <summary>
-        /// Method returns the Path
-        /// </summary>
-        /// <returns></returns>
-        public string GetPath()
-        {
-            string Path = Assembly.GetExecutingAssembly().Location;
-            return Path;
-        }
         /// <summary>
         /// Executes the command logic to create a polygon wall with specified parameters.
         /// </summary>
