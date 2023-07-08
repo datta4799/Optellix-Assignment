@@ -98,7 +98,12 @@ namespace Optellix_Assignment
             public string Category { get; set; }
             public string Family { get; set; }
             public int Count { get; set; }
+            public double Thickness { get; set; }
             public double Volume { get; set; }
+            public List<string> Materials { get; set; }
+            public List<double> MaterialThicknesses { get; set; }
+            public List<double> MaterialVolumes { get; set; }
+            public double Area { get; set; }
         }
 
 
