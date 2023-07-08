@@ -45,9 +45,11 @@ namespace Optellix_Assignment
             {
                 Document doc = commandData.Application.ActiveUIDocument.Document;
                 FilteredElementCollector fec = new FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Walls);
-                FilteredElementCollector stackwall = new FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_StackedWalls);
                 List<WallType> wallTypes = fec.OfClass(typeof(WallType)).Cast<WallType>().ToList();
-                List<WallType>stackwalllist = stackwall.OfClass(typeof(WallType)).Cast<WallType>().ToList();
+
+                FilteredElementCollector stackwall = new FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_StackedWalls);
+                List<WallType> stackwalllist = stackwall.OfClass(typeof(WallType)).Cast<WallType>().ToList();
+
                 foreach (WallType wall in wallTypes)
                 {
                     WallsListBox.Items.Add(wall.Name);
