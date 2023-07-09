@@ -55,7 +55,31 @@ namespace Optellix_Assignment
             List<FamilyData> familyDataList = dataGrid.ItemsSource as List<FamilyData>;
             if (familyDataList != null)
             {
-                ExportToJson(familyDataList);
+                ///Show folder selection dialog
+                var dialog = new System.Windows.Forms.FolderBrowserDialog();
+                System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+
+                if (result == System.Windows.Forms.DialogResult.OK)
+                {
+                    string folderPath = dialog.SelectedPath;
+
+                    ///Show save file dialog to get the JSON file name
+                    var saveDialog = new Microsoft.Win32.SaveFileDialog();
+                    saveDialog.Filter = "JSON Files (*.json)|*.json";
+                    saveDialog.DefaultExt = ".json";
+                    saveDialog.InitialDirectory = folderPath;
+                    saveDialog.FileName = "Structured Layered Info";
+
+                    if (saveDialog.ShowDialog() == true)
+                    {
+                        string filePath = saveDialog.FileName;
+
+                        ///Export the JSON file
+                        ExportToJson(familyDataList, filePath);
+
+                        MessageBox.Show("Structured Layered Data exported to JSON file.");
+                    }
+                }
             }
 
         }
@@ -176,18 +200,11 @@ namespace Optellix_Assignment
             return UnitUtils.ConvertFromInternalUnits(value, feetTypeId);
         }
 
-
-        private void ExportToJson(List<FamilyData> familyDataList)
+        private void ExportToJson(List<FamilyData> familyDataList, string filePath)
         {
             string json = JsonConvert.SerializeObject(familyDataList, Formatting.Indented);
-            string filePath = @"C:\Users\Asus\Desktop\Structured Layered Info.json";
             File.WriteAllText(filePath, json);
-            MessageBox.Show("Structured Layered Data exported to JSON file.");
         }
-        
     }
-
-
-
 }
 
