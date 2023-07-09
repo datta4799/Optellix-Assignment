@@ -1,22 +1,17 @@
 ﻿using Autodesk.Revit.UI;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Optellix_Assignment
-{
-    
+{   
     /// <summary>
     /// Entry point for Revit
     /// </summary>
     public class Plugin : IExternalApplication
     {
-        #region external application methods
+        #region External Application methods
 
         /// <summary>
         /// Calls when application shutdown
@@ -36,21 +31,22 @@ namespace Optellix_Assignment
         public Result OnStartup(UIControlledApplication application)
         {
             RibbonPanel panel = RibbonPanel(application);
+            string Path = Assembly.GetExecutingAssembly().Location;
 
-            ///Create a button that executes CreatePolygonWall class's Execute method
-            CreatePolygonWall cpw = new CreatePolygonWall();
-            string cpwPath = cpw.GetPath();
-            if (panel.AddItem(new PushButtonData("Create Polygon Wall", "Polygon Wall", cpwPath, "Optellix_Assignment.CreatePolygonWall"))
-                is PushButton button)
+            ///Create a button that executes CreatePolygonWall class's Execute Method  
+            if (panel.AddItem(new PushButtonData("Create Polygon Wall", "Polygon Wall", Path, "Optellix_Assignment.CreatePolygonWall"))
+                is PushButton cpwbutton)
             {
-                button.ToolTip = "Create Polygon Wall";
+                cpwbutton.ToolTip = "Create Polygon Wall";
             }
-                
+
+            ///Create a button that executes StructuredLayerInformation Class's Execute Method
             panel.AddSeparator();
-
-
-
-
+            if (panel.AddItem(new PushButtonData("Structured Layer Info", "Structured Layer Info", Path, "Optellix_Assignment.StructuredLayerInformation"))
+                is PushButton slibutton)
+            {
+                slibutton.ToolTip = "Structured Layer Info";
+            }
             return Result.Succeeded;
         }
 
@@ -61,28 +57,31 @@ namespace Optellix_Assignment
         /// <returns></returns>
         public RibbonPanel RibbonPanel(UIControlledApplication app)
         {
+            ///Tab Name
             string tab = "Optellix";
 
             RibbonPanel ribbonPanel = null;
 
             try
             {
+                ///CreateTab
                 app.CreateRibbonTab(tab);
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                TaskDialog.Show("Error",ex.Message.ToString());
             }
 
             try
             {
+                ///Create Panel Under the Tab
                 RibbonPanel panel = app.CreateRibbonPanel(tab, "Assignments");
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                TaskDialog.Show("Error", ex.Message.ToString());
             }
-
+            ///Get the Ribbon Panel with the Assigned name and return it.
             List<RibbonPanel> panels = app.GetRibbonPanels(tab);
             foreach (RibbonPanel p in panels.Where(p => p.Name == "Assignments"))
             {
@@ -90,11 +89,8 @@ namespace Optellix_Assignment
             }
 
             return ribbonPanel;
-
-
         }
 
         #endregion
     }
-
 }

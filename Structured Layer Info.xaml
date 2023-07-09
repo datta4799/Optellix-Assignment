@@ -1,0 +1,25 @@
+﻿<Window x:Class="Optellix_Assignment.Structured_Layer_Info"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Optellix_Assignment"
+             mc:Ignorable="d"
+             Loaded="Window_Loaded"
+            Title="Structured Layer Info" Height="421" Width="872" ResizeMode="CanResize">
+    <Grid HorizontalAlignment="Center" Width="872">
+
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Width="779" HorizontalAlignment="Left">
+            <DataGrid IsReadOnly="True" x:Name="dataGrid" AutoGenerateColumns="False" PreviewMouseWheel="DataGrid_PreviewMouseWheel" Width="790" HorizontalAlignment="Left" ColumnWidth="SizeToHeader">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Width="Auto" Header="Category" Binding="{Binding Category}"/>
+                    <DataGridTextColumn Width="Auto" Header="Family" Binding="{Binding Family}"/>
+                    <DataGridTextColumn Width="50" Header="Count" Binding="{Binding Count}"/>
+                    <DataGridTextColumn Width="130" Header="Volume (c.ft)" Binding="{Binding Volume}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </ScrollViewer>
+        <Button Content="Export" HorizontalAlignment="Left" Margin="790,188,0,0" VerticalAlignment="Top" Width="72" Height="19" Click="Button_Click"/>
+    </Grid>
+</Window>
+
