@@ -4,7 +4,6 @@ using Autodesk.Revit.UI;
 using System;
 using System.Collections.Generic;
 
-
 namespace Optellix_Assignment
 {
     /// <summary>
