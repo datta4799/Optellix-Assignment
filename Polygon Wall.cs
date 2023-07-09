@@ -71,19 +71,17 @@ namespace Optellix_Assignment
             try
             {
                 UIDocument uidoc = commandData.Application.ActiveUIDocument;
-
                 Document doc = uidoc.Document;
-
                 string selectedwall = WallsListBox.SelectedItem.ToString();
 
-                /// Retrieve the wall type based on its name 
+                /// Retrieves the wall type based on its name 
                 FilteredElementCollector collector = new FilteredElementCollector(doc);
                 collector.OfClass(typeof(WallType));
                 IEnumerable<WallType> wallTypes = collector.Cast<WallType>().Where(wt => wt.Name == selectedwall);
 
                 if (wallTypes.Any())
                 {
-                    ///Get the wall type ID
+                    ///Gets the wall type ID
                     wallelementId = wallTypes.First().Id;
                     if (wallelementId == null)
                     {
@@ -106,8 +104,7 @@ namespace Optellix_Assignment
             catch
             {
                 TaskDialog.Show("Wall Selection Error", "No Wall Selected.\nPlease Select a Wall from the List");
-            }
-            
+            }            
         }
         #endregion
     }

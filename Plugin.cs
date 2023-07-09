@@ -5,14 +5,13 @@ using System.Linq;
 using System.Reflection;
 
 namespace Optellix_Assignment
-{
-    
+{   
     /// <summary>
     /// Entry point for Revit
     /// </summary>
     public class Plugin : IExternalApplication
     {
-        #region external application methods
+        #region External Application methods
 
         /// <summary>
         /// Calls when application shutdown
@@ -34,14 +33,14 @@ namespace Optellix_Assignment
             RibbonPanel panel = RibbonPanel(application);
             string Path = Assembly.GetExecutingAssembly().Location;
 
-            ///Create a button that executes CreatePolygonWall class's Execute method  
+            ///Create a button that executes CreatePolygonWall class's Execute Method  
             if (panel.AddItem(new PushButtonData("Create Polygon Wall", "Polygon Wall", Path, "Optellix_Assignment.CreatePolygonWall"))
                 is PushButton cpwbutton)
             {
                 cpwbutton.ToolTip = "Create Polygon Wall";
             }
-            
-            
+
+            ///Create a button that executes StructuredLayerInformation Class's Execute Method
             panel.AddSeparator();
             if (panel.AddItem(new PushButtonData("Structured Layer Info", "Structured Layer Info", Path, "Optellix_Assignment.StructuredLayerInformation"))
                 is PushButton slibutton)
