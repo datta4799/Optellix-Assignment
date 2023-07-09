@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Optellix_Assignment"
              mc:Ignorable="d"
              Loaded="Window_Loaded"
-            Title="Structured Layer Info" Height="421" Width="872" ResizeMode="CanResize">
+            Title="Structured Layer Info" Height="421" Width="872" ResizeMode="NoResize">
     <Grid HorizontalAlignment="Center" Width="872">
 
         <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Width="779" HorizontalAlignment="Left">

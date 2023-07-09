@@ -7,6 +7,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Autodesk.Revit.DB;
 using System.IO;
+using System;
 
 namespace Optellix_Assignment
 {
@@ -135,71 +136,78 @@ namespace Optellix_Assignment
         private List<FamilyData> GetFamilyData()
         {
             List<FamilyData> familyDataList = new List<FamilyData>();
-
-            ///Filters Elements from the Current Document are Collected
-            using (FilteredElementCollector fec = new FilteredElementCollector(doc, doc.ActiveView.Id).WhereElementIsNotElementType()) 
+            try
             {
-                ///Collects the Elements from the Collector
-                List<Element> elementsindoc = fec.ToList();
-
-                /// Retrieves family data by grouping elements based on their names and collecting relevant information.
-                var groupedFamilies = elementsindoc
-                    .Where(element => element.Category != null)
-                    .GroupBy(element => element.Name)
-                    .Select(group => new
-                    {
-                        Category = group.First().Category?.Name,
-                        Family = group.Key,
-                        Elements = group.ToList()
-                    });
-
-                foreach (var groupedFamily in groupedFamilies)
+                ///Filters Elements from the Current Document are Collected
+                using (FilteredElementCollector fec = new FilteredElementCollector(doc, doc.ActiveView.Id).WhereElementIsNotElementType())
                 {
-                    FamilyData familyData = new FamilyData
-                    {
-                        Category = groupedFamily.Category,
-                        Family = groupedFamily.Family,
-                        Count = groupedFamily.Elements.Count,
-                        Thickness = 0,
-                        Volume = 0,
-                        Materials = new List<string>(),
-                        MaterialThicknesses = new List<double>(),
-                        MaterialVolumes = new List<double>(),
-                        Area = 0
-                    };
+                    ///Collects the Elements from the Collector
+                    List<Element> elementsindoc = fec.ToList();
 
-                    foreach (Element element in groupedFamily.Elements)
-                    {
-                        ///Retrieves the following Data from the element Prameters
-                        double volume = ConvertToFeet(element.LookupParameter("Volume")?.AsDouble() ?? 0);
-                        double area = ConvertToFeet(element.LookupParameter("Area")?.AsDouble() ?? 0);
-                        Parameter thicknessParam = element.LookupParameter("Thickness");
-                        if (thicknessParam != null && thicknessParam.HasValue)
+                    /// Retrieves family data by grouping elements based on their names and collecting relevant information.
+                    var groupedFamilies = elementsindoc
+                        .Where(element => element.Category != null)
+                        .GroupBy(element => element.Name)
+                        .Select(group => new
                         {
-                            familyData.Thickness = thicknessParam.AsDouble();
-                        }
-                        familyData.Volume += volume;
-                        familyData.Area += area;
+                            Category = group.First().Category?.Name,
+                            Family = group.Key,
+                            Elements = group.ToList()
+                        });
 
-                        ///Collects all the MaterialId's Which Excluding Non Paint Materials.
-                        ICollection<ElementId> materialIds = element.GetMaterialIds(false);
-
-                        ///Gets the Material as Element from the MaterialId in the ElementId Icollection
-                        foreach (ElementId ids in materialIds)
+                    foreach (var groupedFamily in groupedFamilies)
+                    {
+                        FamilyData familyData = new FamilyData
                         {
-                            Element material = doc.GetElement(ids);
-                            double materialArea = ConvertToFeet(element.GetMaterialArea(ids, false));
-                            double materialVolume = ConvertToFeet(element.GetMaterialVolume(ids));
+                            Category = groupedFamily.Category,
+                            Family = groupedFamily.Family,
+                            Count = groupedFamily.Elements.Count,
+                            Thickness = 0,
+                            Volume = 0,
+                            Materials = new List<string>(),
+                            MaterialThicknesses = new List<double>(),
+                            MaterialVolumes = new List<double>(),
+                            Area = 0
+                        };
 
-                            familyData.Materials.Add(material.Name);
-                            familyData.MaterialThicknesses.Add(materialArea != 0 ? materialVolume / materialArea : 0);
-                            familyData.MaterialVolumes.Add(materialVolume);
+                        foreach (Element element in groupedFamily.Elements)
+                        {
+                            ///Retrieves the following Data from the element Prameters
+                            double volume = ConvertToFeet(element.LookupParameter("Volume")?.AsDouble() ?? 0);
+                            double area = ConvertToFeet(element.LookupParameter("Area")?.AsDouble() ?? 0);
+                            Parameter thicknessParam = element.LookupParameter("Thickness");
+                            if (thicknessParam != null && thicknessParam.HasValue)
+                            {
+                                familyData.Thickness = thicknessParam.AsDouble();
+                            }
+                            familyData.Volume += volume;
+                            familyData.Area += area;
+
+                            ///Collects all the MaterialId's Which Excluding Non Paint Materials.
+                            ICollection<ElementId> materialIds = element.GetMaterialIds(false);
+
+                            ///Gets the Material as Element from the MaterialId in the ElementId Icollection
+                            foreach (ElementId ids in materialIds)
+                            {
+                                Element material = doc.GetElement(ids);
+                                double materialArea = ConvertToFeet(element.GetMaterialArea(ids, false));
+                                double materialVolume = ConvertToFeet(element.GetMaterialVolume(ids));
+
+                                familyData.Materials.Add(material.Name);
+                                familyData.MaterialThicknesses.Add(materialArea != 0 ? materialVolume / materialArea : 0);
+                                familyData.MaterialVolumes.Add(materialVolume);
+                            }
                         }
+                        familyDataList.Add(familyData);
                     }
-                    familyDataList.Add(familyData);
                 }
+                return familyDataList;
             }
-            return familyDataList;
+            catch(Exception ex) 
+            {
+                MessageBox.Show(ex.Message,"Error");
+                return familyDataList;
+            }  
         }
         /// <summary>
         /// Converts a value from internal units to feet.
