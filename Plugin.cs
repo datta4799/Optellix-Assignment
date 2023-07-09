@@ -40,15 +40,22 @@ namespace Optellix_Assignment
             {
                 cpwbutton.ToolTip = "Create Polygon Wall";
             }
-                
+            
+            
             panel.AddSeparator();
-
             if (panel.AddItem(new PushButtonData("Structured Layer Info", "Structured Layer Info", Path, "Optellix_Assignment.StructuredLayerInformation"))
                 is PushButton slibutton)
             {
                 slibutton.ToolTip = "Structured Layer Info";
             }
 
+
+            panel.AddSeparator();
+            if (panel.AddItem(new PushButtonData("Get Materials Info", "Get Materials Info", Path, "Optellix_Assignment.GetMaterials"))
+                is PushButton Matbutton)
+            {
+                Matbutton.ToolTip = "Get Materials Info";
+            }
             return Result.Succeeded;
         }
 

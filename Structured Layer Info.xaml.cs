@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Autodesk.Revit.DB;
+using System.IO;
 
 namespace Optellix_Assignment
 {
@@ -49,6 +50,15 @@ namespace Optellix_Assignment
 
             return FindVisualParent<T>(parentObject);
         }
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            List<FamilyData> familyDataList = dataGrid.ItemsSource as List<FamilyData>;
+            if (familyDataList != null)
+            {
+                ExportToJson(familyDataList);
+            }
+
+        }
         private void LoadFamilyData()
         {
             List<FamilyData> familyDataList = GetFamilyData();
@@ -60,35 +70,74 @@ namespace Optellix_Assignment
         {
             List<FamilyData> familyDataList = new List<FamilyData>();
 
-            // Retrieve all elements in the document
-            FilteredElementCollector collector = new FilteredElementCollector(doc, doc.ActiveView.Id);
-            IList<Element> elements = collector.WhereElementIsNotElementType().ToElements();
+            FilteredElementCollector fec = new FilteredElementCollector(doc, doc.ActiveView.Id).WhereElementIsNotElementType();
+            List<Element> elementsindoc = fec.ToList();
 
-            // Group the elements by category and family name
-            var groupedElements = elements
+            var groupedFamilies = elementsindoc
                 .Where(element => element.Category != null)
-                .GroupBy(element => element.Category.Name)
+                .GroupBy(element => element.Name)
                 .Select(group => new
                 {
-                    Category = group.Key,
-                    Families = group.GroupBy(element => element.Name)
-                        .Select(famGroup => new FamilyData
-                        {
-                            Category = group.Key,
-                            Family = famGroup.Key,
-                            Count = famGroup.Count(),
-                            Volume = famGroup.Where(element => element.LookupParameter("Volume") != null).Sum(element => ConvertToFeet(element.LookupParameter("Volume").AsDouble()))
-                        })
+                    Category = group.First().Category?.Name,
+                    Family = group.Key,
+                    Elements = group.ToList()
                 });
 
-            // Add the grouped elements to the familyDataList
-            foreach (var group in groupedElements)
+            foreach (var groupedFamily in groupedFamilies)
             {
-                familyDataList.AddRange(group.Families);
+                FamilyData familyData = new FamilyData
+                {
+                    Category = groupedFamily.Category,
+                    Family = groupedFamily.Family,
+                    Count = groupedFamily.Elements.Count,
+                    Thickness = 0,
+                    Volume = 0,
+                    Materials = new List<string>(),
+                    MaterialThicknesses = new List<double>(),
+                    MaterialVolumes = new List<double>(),
+                    Area = 0
+                };
+
+                foreach (Element element in groupedFamily.Elements)
+                {
+                    double volume = ConvertToFeet(element.LookupParameter("Volume")?.AsDouble() ?? 0);
+                    double area = ConvertToFeet(element.LookupParameter("Area")?.AsDouble() ?? 0);
+                    Parameter thicknessParam = element.LookupParameter("Thickness");
+                    if (thicknessParam != null && thicknessParam.HasValue)
+                    {
+                        familyData.Thickness = thicknessParam.AsDouble();
+                    }
+                    familyData.Volume += volume;
+                    familyData.Area += area;
+
+                    ICollection<ElementId> materialids = element.GetMaterialIds(false);
+
+                    foreach (ElementId ids in materialids)
+                    {
+                        Element material = doc.GetElement(ids);
+                        double materialArea = ConvertToFeet(element.GetMaterialArea(ids, false));
+                        double materialVolume = ConvertToFeet(element.GetMaterialVolume(ids));
+
+                        familyData.Materials.Add(material.Name);
+                        familyData.MaterialThicknesses.Add(materialArea != 0 ? materialVolume / materialArea : 0);
+                        familyData.MaterialVolumes.Add(materialVolume);
+                    }
+                }
+
+                familyDataList.Add(familyData);
             }
 
             return familyDataList;
         }
+
+
+
+
+
+
+
+
+
 
 
 
@@ -98,25 +147,44 @@ namespace Optellix_Assignment
             public string Category { get; set; }
             public string Family { get; set; }
             public int Count { get; set; }
+
+            [JsonProperty("Thickness (ft)", NullValueHandling = NullValueHandling.Ignore)]
             public double Thickness { get; set; }
+
+            [JsonProperty("Volume (c.ft)", NullValueHandling = NullValueHandling.Ignore)]
             public double Volume { get; set; }
+
+            [JsonProperty("Materials", NullValueHandling = NullValueHandling.Ignore)]
             public List<string> Materials { get; set; }
+
+            [JsonProperty("Material Thicknesses (ft)", NullValueHandling = NullValueHandling.Ignore)]
             public List<double> MaterialThicknesses { get; set; }
+
+            [JsonProperty("Material Volumes (c.ft)", NullValueHandling = NullValueHandling.Ignore)]
             public List<double> MaterialVolumes { get; set; }
+
+            [JsonProperty("Area (sq.ft)", NullValueHandling = NullValueHandling.Ignore)]
             public double Area { get; set; }
         }
 
 
+
+
         private double ConvertToFeet(double value)
         {
-
-            return UnitUtils.ConvertFromInternalUnits(value, DisplayUnitType.DUT_DECIMAL_FEET);
+            ForgeTypeId feetTypeId = UnitTypeId.Feet;
+            return UnitUtils.ConvertFromInternalUnits(value, feetTypeId);
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+
+        private void ExportToJson(List<FamilyData> familyDataList)
         {
-
+            string json = JsonConvert.SerializeObject(familyDataList, Formatting.Indented);
+            string filePath = @"C:\Users\Asus\Desktop\Structured Layered Info.json";
+            File.WriteAllText(filePath, json);
+            MessageBox.Show("Structured Layered Data exported to JSON file.");
         }
+        
     }
 
 
