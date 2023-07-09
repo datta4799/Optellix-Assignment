@@ -48,14 +48,6 @@ namespace Optellix_Assignment
             {
                 slibutton.ToolTip = "Structured Layer Info";
             }
-
-
-            panel.AddSeparator();
-            if (panel.AddItem(new PushButtonData("Get Materials Info", "Get Materials Info", Path, "Optellix_Assignment.GetMaterials"))
-                is PushButton Matbutton)
-            {
-                Matbutton.ToolTip = "Get Materials Info";
-            }
             return Result.Succeeded;
         }
 

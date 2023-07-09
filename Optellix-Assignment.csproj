@@ -77,7 +77,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CreatePolygonWall.cs" />
-    <Compile Include="GetMaterials.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Polygon Wall.cs">
       <SubType>Form</SubType>
