@@ -10,7 +10,7 @@
     <Grid HorizontalAlignment="Center" Width="872">
 
         <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Width="779" HorizontalAlignment="Left">
-            <DataGrid IsReadOnly="True" x:Name="dataGrid" AutoGenerateColumns="False" PreviewMouseWheel="DataGrid_PreviewMouseWheel" Width="790" HorizontalAlignment="Left" ColumnWidth="SizeToHeader">
+            <DataGrid IsReadOnly="True" x:Name="dataGrid" AutoGenerateColumns="False" PreviewMouseWheel="DataGrid_PreviewMouseWheel" Width="779" ColumnWidth="SizeToHeader">
                 <DataGrid.Columns>
                     <DataGridTextColumn Width="Auto" Header="Category" Binding="{Binding Category}"/>
                     <DataGridTextColumn Width="Auto" Header="Family" Binding="{Binding Family}"/>
@@ -19,7 +19,7 @@
                 </DataGrid.Columns>
             </DataGrid>
         </ScrollViewer>
-        <Button Content="Export" HorizontalAlignment="Left" Margin="790,188,0,0" VerticalAlignment="Top" Width="72" Height="19" Click="Button_Click"/>
+        <Button Content="Export" HorizontalAlignment="Left" Margin="789,0,0,0" VerticalAlignment="Center" Width="73" Height="19" Click="Button_Click"/>
     </Grid>
 </Window>
 
