@@ -10,7 +10,7 @@
     <Grid HorizontalAlignment="Center" Width="872">
 
         <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Width="779" HorizontalAlignment="Left">
-            <DataGrid IsReadOnly="True" x:Name="dataGrid" AutoGenerateColumns="False" PreviewMouseWheel="DataGrid_PreviewMouseWheel" Width="779" ColumnWidth="SizeToHeader">
+            <DataGrid IsReadOnly="True" x:Name="dataGrid" AutoGenerateColumns="False" PreviewMouseWheel="DataGrid_PreviewMouseWheel" Width="780" ColumnWidth="SizeToHeader">
                 <DataGrid.Columns>
                     <DataGridTextColumn Width="Auto" Header="Category" Binding="{Binding Category}"/>
                     <DataGridTextColumn Width="Auto" Header="Family" Binding="{Binding Family}"/>
